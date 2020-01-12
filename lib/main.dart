@@ -11,13 +11,56 @@ class RandomEnglish extends StatefulWidget {
 }
 
 class _RandomEnglishState extends State<RandomEnglish> {
+  final _words= <WordPair>[];
+  final _checkedWords = new Set<WordPair>();
   @override
   Widget build(BuildContext context) {
-    final wordPair = new WordPair.random();
+    // final _words = new WordPair.random();
 
-    return new Text(
-      wordPair.asUpperCase,
-      style: new TextStyle(fontSize: 22.0)
+    // //The Text
+    // return new Text(
+    //   wordPair.asUpperCase,
+    //   style: new TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold  )
+    // );
+
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Lish of English words"),
+      ),
+      body: new ListView.builder( itemBuilder: ( context, index) { 
+        if (index>=_words.length) {
+            _words.addAll(generateWordPairs().take(10));
+        }
+        return _buildRow(_words[index],index);
+       },), 
+
+    );
+  }
+
+  Widget _buildRow(WordPair wordPair, int index){
+   final texColor = index % 2 ==0 ? Colors.red : Colors.blue;
+   final ischecked = _checkedWords.contains(wordPair);
+   
+    return ListTile(
+      leading: new Icon(
+        ischecked ? Icons.check_box: Icons.check_box_outline_blank,
+        color: texColor,
+      ),
+      title: new Text(
+        wordPair.asUpperCase,
+        style: new TextStyle(fontSize: 18.0, color:texColor)
+      ),
+      onTap: (){
+        setState(() {
+          if (ischecked){
+            _checkedWords.remove(wordPair);
+          }
+          else{
+            _checkedWords.add(wordPair );
+          }
+        });
+
+      },
     );
   }
 }
@@ -28,16 +71,9 @@ class MyApp extends StatelessWidget {
     
     return new MaterialApp(
       title: "This is my first Flutter app",
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: new Text("This is Header'title"),
-        ),
-        body: new Center(
-          child: new RandomEnglish()
-        ),
-      ) ,
+      home: new RandomEnglish(),
 
-      debugShowCheckedModeBanner: false, //Bo icon debug tren header
+      debugShowCheckedModeBanner: false //Bo icon debug tren header
     );
   }
 }
